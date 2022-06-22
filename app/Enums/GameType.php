@@ -4,10 +4,10 @@ namespace App\Enums;
 
 use App\Traits\EnumToArray;
 
-enum Division: string
+enum GameType: string
 {
     use EnumToArray;
 
-    case A = 'a';
-    case B = 'b';
+    case GROUP = 'group';
+    case PLAYOFF = 'playoff';
 }

@@ -11,7 +11,7 @@ return new class extends Migration {
         Schema::create('teams', static function (Blueprint $table) {
             $table->id();
             $table->string('name', 32);
-            $table->enum('division', Division::list()->toArray());
+            $table->enum('division', Division::values());
             $table->timestamps();
             $table->softDeletes();
         });
