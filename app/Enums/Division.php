@@ -2,8 +2,16 @@
 
 namespace App\Enums;
 
-enum Division
+use Illuminate\Support\Collection;
+
+enum Division: string
 {
-    case A;
-    case B;
+    case A = 'a';
+    case B = 'b';
+
+    public static function list(): Collection
+    {
+        return collect(self::cases())
+            ->map(static fn($division) => $division->value);
+    }
 }
