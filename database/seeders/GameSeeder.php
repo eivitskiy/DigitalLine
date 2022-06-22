@@ -18,10 +18,7 @@ class GameSeeder extends Seeder
      */
     protected static function generateGroupGames(): void
     {
-        $divisions = [
-            Division::A->value => Team::whereDivision(Division::A)->get(),
-            Division::B->value => Team::whereDivision(Division::B)->get(),
-        ];
+        $divisions = Division::teams();
 
         $date = now()->subDays(random_int(365, 730));
 
