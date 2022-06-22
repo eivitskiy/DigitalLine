@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Enums\Division;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Arr;
 use JetBrains\PhpStorm\ArrayShape;
 
 /**
@@ -15,7 +16,7 @@ class TeamFactory extends Factory
     {
         return [
             'name'     => $this->faker->company,
-            'division' => array_rand(Division::values()),
+            'division' => Arr::random(Division::values()),
         ];
     }
 }

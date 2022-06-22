@@ -32,6 +32,9 @@ use Illuminate\Support\Carbon;
  * @method static Builder|Team whereName($value)
  * @method static Builder|Team whereUpdatedAt($value)
  * @mixin Eloquent
+ * @method static \Illuminate\Database\Query\Builder|Team onlyTrashed()
+ * @method static \Illuminate\Database\Query\Builder|Team withTrashed()
+ * @method static \Illuminate\Database\Query\Builder|Team withoutTrashed()
  */
 class Team extends Model
 {
@@ -48,5 +51,22 @@ class Team extends Model
             get: static fn($value, $attributes) => Division::from($value),
             set: static fn(Division $value) => $value->value,
         );
+    }
+
+    /** @noinspection PhpUnused */
+    public function games(): Builder|Game
+    {
+        return Game::where(function ($query) {
+            $query->where('participant_a', $this->id)
+                ->orWhere('participant_b', $this->id);
+        });
+    }
+
+    public function gamesWithTeam(Team $team): Builder|Game
+    {
+        return $this->games()->where(function ($query) use ($team) {
+            $query->where('participant_a', $team->id)
+                ->orWhere('participant_b', $team->id);
+        });
     }
 }
