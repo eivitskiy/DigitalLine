@@ -4,7 +4,6 @@ namespace App\Models;
 
 use App\Enums\Division;
 use App\Enums\GameType;
-use Database\Factories\TeamFactory;
 use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -16,15 +15,17 @@ use Illuminate\Support\Carbon;
 /**
  * App\Models\Team
  *
- * @property int         $id
- * @property string      $name
- * @property string      $division
+ * @property int $id
+ * @property string $name
+ * @property string $division
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * @property string|null $deleted_at
- * @method static TeamFactory factory(...$parameters)
+ * @property Carbon|null $deleted_at
+ * @property-read int $score
+ * @method static \Database\Factories\TeamFactory factory(...$parameters)
  * @method static Builder|Team newModelQuery()
  * @method static Builder|Team newQuery()
+ * @method static \Illuminate\Database\Query\Builder|Team onlyTrashed()
  * @method static Builder|Team query()
  * @method static Builder|Team whereCreatedAt($value)
  * @method static Builder|Team whereDeletedAt($value)
@@ -32,11 +33,9 @@ use Illuminate\Support\Carbon;
  * @method static Builder|Team whereId($value)
  * @method static Builder|Team whereName($value)
  * @method static Builder|Team whereUpdatedAt($value)
- * @mixin Eloquent
- * @method static \Illuminate\Database\Query\Builder|Team onlyTrashed()
  * @method static \Illuminate\Database\Query\Builder|Team withTrashed()
  * @method static \Illuminate\Database\Query\Builder|Team withoutTrashed()
- * @property-read int $score
+ * @mixin Eloquent
  */
 class Team extends Model
 {
@@ -96,5 +95,16 @@ class Team extends Model
         }
 
         return $games;
+    }
+
+    public static function getTeamsByDivisions(): array
+    {
+        $teams = [];
+
+        foreach(Division::cases() as $division) {
+            $teams[$division->name] = self::whereDivision($division)->get();
+        }
+
+        return $teams;
     }
 }

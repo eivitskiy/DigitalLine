@@ -1,6 +1,6 @@
 <?php
 
-use App\Enums\Division;
+use App\Models\Team;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -16,11 +16,12 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', static function () {
     return view('tournament', [
-        'divisions' => Division::teams(),
+        'divisions' => Team::getTeamsByDivisions(),
     ]);
 });
 
 Route::get('regenerate', static function () {
     \Illuminate\Support\Facades\Artisan::call('db:seed');
+
     return redirect('/');
 });

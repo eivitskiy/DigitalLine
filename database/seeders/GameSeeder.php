@@ -41,7 +41,7 @@ class GameSeeder extends Seeder
      */
     protected static function generateGroupGames(): void
     {
-        $divisions = Division::teams();
+        $divisions = Team::getTeamsByDivisions();
 
         $date = now()->subDays(random_int(365, 730));
 
@@ -56,6 +56,21 @@ class GameSeeder extends Seeder
         }
     }
 
+    protected static function getTeamsByWinners($limit): array
+    {
+        $divisions = Team::getTeamsByDivisions();
+
+        // построить дерево
+
+        // победители по очкам
+        foreach ($divisions as &$teams) {
+            /** @var Collection $teams */
+            $teams = $teams->sortByDesc(fn($team) => $team->score)->take($limit);
+        }
+
+        return $divisions;
+    }
+
     /**
      * @throws Exception
      */
@@ -65,7 +80,7 @@ class GameSeeder extends Seeder
 
         $round = 4;
 
-        $divisions = Division::teams();
+        $divisions = Team::getTeamsByDivisions();
 
         $date = now()->subDays(random_int(180, 365));
 

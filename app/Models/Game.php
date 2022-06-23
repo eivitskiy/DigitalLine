@@ -17,14 +17,6 @@ use Illuminate\Support\Carbon;
 /**
  * App\Models\Game
  *
- * @method static GameFactory factory(...$parameters)
- * @method static Builder|Game newModelQuery()
- * @method static Builder|Game newQuery()
- * @method static \Illuminate\Database\Query\Builder|Game onlyTrashed()
- * @method static Builder|Game query()
- * @method static \Illuminate\Database\Query\Builder|Game withTrashed()
- * @method static \Illuminate\Database\Query\Builder|Game withoutTrashed()
- * @mixin Eloquent
  * @property int            $id
  * @property int            $participant_a
  * @property int            $participant_b
@@ -32,14 +24,22 @@ use Illuminate\Support\Carbon;
  * @property int            $score_b
  * @property string         $date
  * @property string         $type
+ * @property GameRound|null $round
  * @property Carbon|null    $created_at
  * @property Carbon|null    $updated_at
  * @property Carbon|null    $deleted_at
+ * @property-read Team|null $winner
  * @property-read Team|null $participantA
  * @property-read Team|null $participantB
+ * @method static GameFactory factory(...$parameters)
+ * @method static Builder|Game newModelQuery()
+ * @method static Builder|Game newQuery()
+ * @method static \Illuminate\Database\Query\Builder|Game onlyTrashed()
+ * @method static Builder|Game query()
  * @method static Builder|Game whereCreatedAt($value)
  * @method static Builder|Game whereDate($value)
  * @method static Builder|Game whereDeletedAt($value)
+ * @method static Builder|Game whereGameRound($value)
  * @method static Builder|Game whereId($value)
  * @method static Builder|Game whereParticipantA($value)
  * @method static Builder|Game whereParticipantB($value)
@@ -47,7 +47,9 @@ use Illuminate\Support\Carbon;
  * @method static Builder|Game whereScoreB($value)
  * @method static Builder|Game whereType($value)
  * @method static Builder|Game whereUpdatedAt($value)
- * @property-read Team|null $winner
+ * @method static \Illuminate\Database\Query\Builder|Game withTrashed()
+ * @method static \Illuminate\Database\Query\Builder|Game withoutTrashed()
+ * @mixin Eloquent
  */
 class Game extends Model
 {
