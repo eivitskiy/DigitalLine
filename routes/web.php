@@ -1,5 +1,7 @@
 <?php
 
+use App\Enums\GameType;
+use App\Models\Game;
 use App\Models\Team;
 use Illuminate\Support\Facades\Route;
 
@@ -17,6 +19,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', static function () {
     return view('tournament', [
         'divisions' => Team::getTeamsByDivisions(),
+        'playoff'   => Game::where('type', GameType::PLAYOFF)->get(),
     ]);
 });
 

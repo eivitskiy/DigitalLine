@@ -1,4 +1,4 @@
-<table class="group-games">
+<table class="games group-games">
     <thead>
     <tr>
         <th>Teams</th>

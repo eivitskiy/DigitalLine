@@ -19,21 +19,35 @@
                 font-family: 'Nunito', sans-serif;
             }
 
-            table.group-games td,
-            table.group-games th {
+            table.games td,
+            table.games th {
                 border: solid 1px rgb(74, 85, 104);
-                height: 75px;
+                text-align: center;
                 padding: 5px;
-                width: 100px;
             }
-            table.group-games td.disabled {
+            table.games td.disabled {
                 background: rgb(74, 85, 104);
             }
-            table.group-games td:not(.disabled):not(:first-of-type):not(:last-of-type) {
+            table.games td:not(.disabled):not(:first-of-type):not(:last-of-type) {
                 cursor: pointer;
             }
-            table.group-games tr > td:first-of-type {
+            table.games tr > td:first-of-type {
                 font-weight: bold;
+            }
+
+            table.group-games td,
+            table.group-games th {
+                height: 75px;
+                width: 100px;
+            }
+
+            table.playoff-games {
+                width: 100%;
+            }
+            table.playoff-games td,
+            table.playoff-games th {
+                height: 75px;
+                width: 100px;
             }
         </style>
     </head>
@@ -65,7 +79,7 @@
                 <div class="mt-8 bg-white dark:bg-gray-800 overflow-hidden shadow sm:rounded-lg">
                     <div class="grid grid-cols-1 md:grid-cols-2">
                         @foreach($divisions as $division => $teams)
-                            <div class="p-6 border-t border-gray-200 dark:border-gray-700 md:border-l text-gray-600 dark:text-gray-400">
+                            <div class="p-6 border-t border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400">
                                 <div class="flex items-center">
                                     <div class="ml-4 text-lg leading-7 font-semibold">
                                         Division {{$division}}
@@ -79,6 +93,21 @@
                                 </div>
                             </div>
                         @endforeach
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-1">
+                        <div class="p-12 border-t border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 ml-12 mr-2">
+                            <div class="flex items-center">
+                                <div class="ml-4 text-lg leading-7 font-semibold">
+                                    PlayOff
+                                </div>
+                            </div>
+
+                            <div class="ml-12">
+                                <div class="mt-2 text-sm">
+                                    @include('playoff', ['games' => $playoff])
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
