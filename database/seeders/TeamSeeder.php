@@ -18,11 +18,13 @@ class TeamSeeder extends Seeder
         DB::transaction(static function () {
             Team::truncate();
 
-            Team::factory(10)->state([
+            $teamsCount = 4;
+
+            Team::factory($teamsCount)->state([
                 'division' => Division::A,
             ])->create();
 
-            Team::factory(10)->state([
+            Team::factory($teamsCount)->state([
                 'division' => Division::B,
             ])->create();
         });

@@ -14,8 +14,13 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
+Route::get('/', static function () {
     return view('tournament', [
         'divisions' => Division::teams(),
     ]);
+});
+
+Route::get('regenerate', static function () {
+    \Illuminate\Support\Facades\Artisan::call('db:seed');
+    return redirect('/');
 });

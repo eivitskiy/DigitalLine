@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
 
@@ -46,6 +46,7 @@ use Illuminate\Support\Carbon;
  * @method static Builder|Game whereScoreB($value)
  * @method static Builder|Game whereType($value)
  * @method static Builder|Game whereUpdatedAt($value)
+ * @property-read Team|null $winner
  */
 class Game extends Model
 {
@@ -60,6 +61,20 @@ class Game extends Model
         'date',
         'type',
     ];
+
+    /** @noinspection PhpUnused */
+    public function getWinnerAttribute(): ?Team
+    {
+        if ($this->score_a > $this->score_b) {
+            return $this->participantA;
+        }
+
+        if ($this->score_b > $this->score_a) {
+            return $this->participantB;
+        }
+
+        return null;
+    }
 
     protected function type(): Attribute
     {
@@ -79,14 +94,14 @@ class Game extends Model
     }
 
     /** @noinspection PhpUnused */
-    public function participantA(): HasOne
+    public function participantA(): BelongsTo
     {
-        return $this->hasOne(Team::class, 'participant_a', 'id');
+        return $this->belongsTo(Team::class, 'participant_a', 'id');
     }
 
     /** @noinspection PhpUnused */
-    public function participantB(): HasOne
+    public function participantB(): BelongsTo
     {
-        return $this->hasOne(Team::class, 'participant_b', 'id');
+        return $this->belongsTo(Team::class, 'participant_b', 'id');
     }
 }

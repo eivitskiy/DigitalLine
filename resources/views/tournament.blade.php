@@ -18,11 +18,50 @@
             body {
                 font-family: 'Nunito', sans-serif;
             }
+
+            table.group-games td,
+            table.group-games th {
+                border: solid 1px rgb(74, 85, 104);
+                height: 75px;
+                padding: 5px;
+                width: 100px;
+            }
+            table.group-games td.disabled {
+                background: rgb(74, 85, 104);
+            }
+            table.group-games td:not(.disabled):not(:first-of-type):not(:last-of-type) {
+                cursor: pointer;
+            }
+            table.group-games tr > td:first-of-type {
+                font-weight: bold;
+            }
         </style>
     </head>
     <body class="antialiased">
         <div class="relative flex items-top justify-center min-h-screen bg-gray-100 dark:bg-gray-900 sm:items-center py-4 sm:pt-0">
             <div class="max-w-10xl mx-auto sm:px-6 lg:px-8">
+                <div class="flex justify-center mt-4 sm:items-center sm:justify-between">
+                    <div class="text-center text-sm text-gray-500 sm:text-left">
+                        <div class="flex items-center">
+                            <button class="ml-1" onclick="window.location='/regenerate'">
+                                Regenerate command and results
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="ml-4 text-center text-sm text-gray-500 sm:text-right sm:ml-0">
+                        <div class="flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 50 50" width="16px" height="16px">
+                                <g id="surface41279248">
+                                    <path style=" stroke:none;fill-rule:nonzero;fill:rgb(29.019609%,33.333334%,40.784314%);fill-opacity:1;" d="M 46.136719 6.550781 C 45.386719 5.914062 44.210938 5.824219 42.992188 6.3125 L 42.988281 6.3125 C 41.707031 6.828125 6.726562 21.832031 5.304688 22.445312 C 5.046875 22.535156 2.78125 23.378906 3.015625 25.257812 C 3.222656 26.953125 5.042969 27.65625 5.265625 27.738281 L 14.15625 30.78125 C 14.746094 32.746094 16.921875 39.992188 17.402344 41.539062 C 17.703125 42.503906 18.191406 43.773438 19.050781 44.035156 C 19.800781 44.324219 20.550781 44.058594 21.03125 43.679688 L 26.46875 38.636719 L 35.246094 45.480469 L 35.457031 45.605469 C 36.050781 45.871094 36.621094 46.003906 37.167969 46.003906 C 37.589844 46.003906 37.992188 45.921875 38.378906 45.765625 C 39.695312 45.226562 40.21875 43.972656 40.273438 43.828125 L 46.832031 9.753906 C 47.230469 7.933594 46.675781 7.007812 46.136719 6.550781 Z M 22 32 L 19 40 L 16 30 L 39 13 Z M 22 32 "/>
+                                </g>
+                            </svg>
+                            <a href="https:/t.me/eivitskiy" target="_blank" class="ml-1 underline">
+                                @eivitskiy
+                            </a>
+                        </div>
+                    </div>
+                </div>
                 <div class="mt-8 bg-white dark:bg-gray-800 overflow-hidden shadow sm:rounded-lg">
                     <div class="grid grid-cols-1 md:grid-cols-2">
                         @foreach($divisions as $division => $teams)

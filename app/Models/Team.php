@@ -35,6 +35,7 @@ use Illuminate\Support\Carbon;
  * @method static \Illuminate\Database\Query\Builder|Team onlyTrashed()
  * @method static \Illuminate\Database\Query\Builder|Team withTrashed()
  * @method static \Illuminate\Database\Query\Builder|Team withoutTrashed()
+ * @property-read int $score
  */
 class Team extends Model
 {
@@ -51,6 +52,24 @@ class Team extends Model
             get: static fn($value, $attributes) => Division::from($value),
             set: static fn(Division $value) => $value->value,
         );
+    }
+
+    public function getScoreAttribute(): int
+    {
+        $score = 0;
+
+        foreach($this->games()->get() as $game) {
+            if (is_null($game->winner)) {
+                // за ничью - 1 балл
+                $score++;
+            } else if ($game->winner && $game->winner->id === $this->id) {
+                // за победу - 3 балла
+                $score += 3;
+            }
+            // за проигрыш - 0 баллов
+        }
+
+        return $score;
     }
 
     /** @noinspection PhpUnused */
