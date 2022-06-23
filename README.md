@@ -1,64 +1,92 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400"></a></p>
+# Тестовое задание DigitalLine
+## Введение
+Это код приложения для генерации турнирной таблицы.
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+## Развёртывание приложения
+### Рекомендации
+Для быстрого развёртывания рекомендуется использовать [DigitalLineServer](https://github.com/eivitskiy/DigitalLineServer)
+и соответствующую структуру директорий
+```
++ DigitalLine - основная директория проекта
+|- server - директория сервера
+| |- nginx - конфиги nginx'а
+| |- php-fpm - конфиги php
+| |- postgres - конфиги и данные postgres
+|  \ ... прочие файлы
+|
+|- www - директория проекта турнирной таблицы
+|  \ ... файлы проекта турнирной таблицы
+| ...
+```
+Процесс настройки DigitalLineServer описан в [README](https://github.com/eivitskiy/DigitalLineServer/blob/main/README.md) проекта
 
-## About Laravel
+### Клонирование репозитория
+Создаём пустую папку для проекта и переходим в неё
+```bash
+mkdir DigitalLine && cd DigitalLine
+```
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+Внутри папки выполним команду клонирования репозитория и перейдём внутрь новой папки
+```bash
+git clone git@github.com:eivitskiy/DigitalLine.git www && cd www
+```
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+### Конфигурирование
+Команды необходимо выполнять в среде с установленным PHP8.1, например это контейнер `php-fpm` проекта DigitalLineServer
+Для выполнения команд в контейнере необходимо сделать сдедующее:
+- в папке server запустить контейнеры (как это сделать описано в README соответствующего проекта)
+- выполнить команду
+```bash
+sudo docker-compose exec php-fpm bash
+```
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+Далее все команды выполняются внутри контейнера `php-fpm`
 
-## Learning Laravel
+1. Перейдём в каталог с файлами проекта
+```bash
+cd /var/www
+```
+2. Скопируем пример файла переменных окружения командой
+```bash
+cp .env.example .env
+```
+>При необходимости изменить значения переменных окружения в файле `.env`
+>>Обязательно нужно это сделать, если приложение запускается без использования DigitalLineServer
+3. Установим зависимости проекта с помощью менеджера пакетов [composer](https://getcomposer.org/)
+```bash
+composer install
+```
+4. Сгенерируем ключ приложения командой
+```bash
+php artisan key:generate
+```
+5. Применим миграции
+```bash
+php artisan migrate
+```
+6. Опционально: можно наполнить базу данных
+```bash
+php artisan db:seed 
+```
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+Приложение готово для запуска. Для этого в браузере перейдём на http://localhost (при использовании DigitalLineServer)
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+Примерный внешний вид приложения:
+<img src="https://i.imgur.com/HRy4j1Z.png" />
 
-## Laravel Sponsors
+## Победители группового отбора
+В таблицах группового отбора отображаются игры команд.
+Если навести курсор мыши на ячейку со счётом, можно увидеть победителя игры.
+В последней колонке отображаются очки команды. Подсчёт производится следующим образом:
+- за победу в игре начисляется 3 балла
+- за ничью в игре начисляется 1 балл
+- за поражение в игре баллы не начисляются
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+## Игры плей-офф
+В таблице игр плей-офф отображаются игры четвертьфинала, полуфинала и финала.
+Игры проходят в режиме "на выбывание".
+В ячейках отображаются названия команд и счёт, проигравшая команда перечёркнута.
 
-### Premium Partners
-
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
-
-## Contributing
-
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## Генерация данных
+В левой верхней части окна приложения имеется кнопка, при нажатии на которую все данные в БД очищаются и генерируется
+новый набор: команды, игры отборочного турнира, игры плей-офф. При этом страница будет обновлена с новыми данными.

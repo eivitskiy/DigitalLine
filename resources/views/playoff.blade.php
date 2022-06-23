@@ -24,6 +24,10 @@
                     </td>
                 @endif
             @endforeach
+
+            @if(\App\Enums\GameRound::OneFourth === $i)
+                <td rowspan="4">Результаты</td>
+            @endif
         </tr>
     @endfor
     <tr>
