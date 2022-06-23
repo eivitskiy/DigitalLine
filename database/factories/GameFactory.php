@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Enums\GameRound;
 use App\Enums\GameType;
 use App\Models\Team;
 use Exception;
@@ -20,7 +21,8 @@ class GameFactory extends Factory
         'score_a'       => "int",
         'score_b'       => "int",
         'date'          => "string",
-        'type'          => "array|int|string",
+        'type'          => "array|mixed",
+        'round'         => "array|mixed"
     ])] public function definition(): array
     {
         /** @var Team $teamA */
@@ -29,7 +31,7 @@ class GameFactory extends Factory
         $teamB = Team::where('id', '!=', $teamA->id)
             ->inRandomOrder()->first();
 
-        return [
+        $game = [
             'participant_a' => $teamA->id,
             'participant_b' => $teamB->id,
             'score_a'       => random_int(0, 5),
@@ -37,5 +39,11 @@ class GameFactory extends Factory
             'date'          => $this->faker->date,
             'type'          => Arr::random(GameType::cases()),
         ];
+
+        if (GameType::PLAYOFF === $game['type']) {
+            $game['round'] = Arr::random(GameRound::cases());
+        }
+
+        return $game;
     }
 }

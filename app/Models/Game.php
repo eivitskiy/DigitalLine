@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\GameRound;
 use App\Enums\GameType;
 use Database\Factories\GameFactory;
 use Eloquent;
@@ -60,6 +61,7 @@ class Game extends Model
         'score_b',
         'date',
         'type',
+        'round',
     ];
 
     /** @noinspection PhpUnused */
@@ -81,6 +83,14 @@ class Game extends Model
         return Attribute::make(
             get: static fn($value, $attributes) => GameType::from($value),
             set: static fn(GameType $value) => $value->value,
+        );
+    }
+
+    protected function round(): Attribute
+    {
+        return Attribute::make(
+            get: static fn($value, $attributes) => GameRound::from($value),
+            set: static fn(?GameRound $value) => $value->value ?? null,
         );
     }
 

@@ -14,9 +14,12 @@ enum Division: string
 
     public static function teams(): array
     {
-        return [
-            self::A->name => Team::whereDivision(self::A)->get(),
-            self::B->name => Team::whereDivision(self::B)->get(),
-        ];
+        $teams = [];
+
+        foreach(self::cases() as $division) {
+            $teams[$division->name] = Team::whereDivision($division)->get();
+        }
+
+        return $teams;
     }
 }

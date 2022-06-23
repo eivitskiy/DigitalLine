@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\Division;
+use App\Enums\GameType;
 use Database\Factories\TeamFactory;
 use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
@@ -54,6 +55,7 @@ class Team extends Model
         );
     }
 
+    /** @noinspection PhpUnused */
     public function getScoreAttribute(): int
     {
         $score = 0;
@@ -81,11 +83,18 @@ class Team extends Model
         });
     }
 
-    public function gamesWithTeam(Team $team): Builder|Game
+    public function gamesWithTeam(Team $team, ?GameType $type = null): Builder|Game
     {
-        return $this->games()->where(function ($query) use ($team) {
+        $games = $this->games()->where(function ($query) use ($team) {
             $query->where('participant_a', $team->id)
                 ->orWhere('participant_b', $team->id);
         });
+
+        if ($type) {
+            /** @noinspection StaticInvocationViaThisInspection */
+            $games->whereType($type->value);
+        }
+
+        return $games;
     }
 }

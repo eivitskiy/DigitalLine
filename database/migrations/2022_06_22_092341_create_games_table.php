@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\GameRound;
 use App\Enums\GameType;
 use App\Models\Team;
 use Illuminate\Database\Migrations\Migration;
@@ -17,6 +18,7 @@ return new class extends Migration {
             $table->unsignedSmallInteger('score_b');
             $table->date('date');
             $table->enum('type', GameType::values());
+            $table->enum('round', GameRound::values())->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

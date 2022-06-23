@@ -18,7 +18,7 @@
                 @else
                     @php
                       /** @var \App\Models\Game $game */
-                      $game = $teamA->gamesWithTeam($teamB)->first();
+                      $game = $teamA->gamesWithTeam($teamB, \App\Enums\GameType::GROUP)->first();
                     @endphp
                     <td title="{{ $game->winner->name ?? 'draw' }}">
                         {{ $game->score_a }} : {{ $game->score_b }}
