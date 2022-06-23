@@ -17,98 +17,130 @@ use Throwable;
 
 class GameSeeder extends Seeder
 {
-    protected static function addGame(Team $teamA, Team $teamB, Carbon $date, GameType $type, ?GameRound $round): void
+    protected Carbon $date;
+
+    /**
+     * @throws Exception
+     */
+    public function __construct()
     {
-        if ($teamA->id === $teamB->id) {
-            return;
-        }
-
-        if ($teamA->gamesWithTeam($teamB, $type)->exists()) {
-            return;
-        }
-
-        Game::factory()->state([
-            'participant_a' => $teamA->id,
-            'participant_b' => $teamB->id,
-            'type'          => $type,
-            'round'         => $round,
-            'date'          => $date->addDay()->format('Y-m-d'),
-        ])->create();
+        $this->date = now()->subDays(random_int(180, 365));
     }
 
     /**
      * @throws Exception
      */
-    protected static function generateGroupGames(): void
+    protected function addGame(Team $teamA, Team $teamB, GameType $type, ?GameRound $round): ?Game
+    {
+        if ($teamA->id === $teamB->id) {
+            return null;
+        }
+
+        if ($teamA->gamesWithTeam($teamB, $type)->exists()) {
+            return null;
+        }
+
+        $state = [
+            'participant_a' => $teamA->id,
+            'participant_b' => $teamB->id,
+            'type'          => $type,
+            'round'         => $round,
+            'date'          => $this->date->addDay()->format('Y-m-d'),
+        ];
+
+        if (GameType::PLAYOFF === $type) {
+            $state['score_a'] = random_int(0, 10);
+            do {
+                $state['score_b'] = random_int(0, 10);
+            } while ($state['score_a'] === $state['score_b']);
+        }
+
+        return Game::factory()->state($state)->create();
+    }
+
+    /**
+     * @throws Exception
+     */
+    protected function generateGroupGames(): void
     {
         $divisions = Team::getTeamsByDivisions();
-
-        $date = now()->subDays(random_int(365, 730));
 
         foreach ($divisions as $teams) {
             /** @var Team $teamA */
             foreach ($teams as $teamA) {
                 /** @var Team $teamB */
                 foreach ($teams as $teamB) {
-                    self::addGame($teamA, $teamB, $date, GameType::GROUP, null);
+                    $this->addGame($teamA, $teamB, GameType::GROUP, null);
                 }
             }
         }
     }
 
-    protected static function getTeamsByWinners($limit): array
+    protected function generateOneFourthGames(): \Illuminate\Support\Collection
     {
         $divisions = Team::getTeamsByDivisions();
+        $limit     = 4;
 
-        // построить дерево
+        $games = collect();
 
-        // победители по очкам
+        /** @noinspection AlterInForeachInspection */
         foreach ($divisions as &$teams) {
             /** @var Collection $teams */
             $teams = $teams->sortByDesc(fn($team) => $team->score)->take($limit);
         }
 
-        return $divisions;
+        $i = 1;
+        $j = $limit;
+
+        while ($limit > 0) {
+            $teamA = Arr::first($divisions)->take($i)->last();
+            $teamB = Arr::last($divisions)->take($j)->last();
+
+            if ($game = $this->addGame($teamA, $teamB, GameType::PLAYOFF, GameRound::OneFourth)) {
+                $games->push($game);
+            }
+
+            $i++;
+            $j--;
+            $limit--;
+        }
+
+        return $games;
+    }
+
+    protected function generateSemiFinalGames(): \Illuminate\Support\Collection
+    {
+        $oneFourthGames = $this->generateOneFourthGames();
+
+        $games = collect();
+
+        for ($i = 0; $i < 2; $i++) {
+            $teamA = $oneFourthGames->shift()->winner;
+            $teamB = $oneFourthGames->shift()->winner;
+
+            if ($game = $this->addGame($teamA, $teamB, GameType::PLAYOFF, GameRound::SemiFinal)) {
+                $games->push($game);
+            }
+        }
+        return $games;
+    }
+
+    protected function generateFinalGame(): void
+    {
+        $semiFinalGames = $this->generateSemiFinalGames();
+
+        $teamA = $semiFinalGames->shift()->winner;
+        $teamB = $semiFinalGames->shift()->winner;
+
+        $this->addGame($teamA, $teamB, GameType::PLAYOFF, GameRound::TheFinal);
     }
 
     /**
      * @throws Exception
      */
-    protected static function generatePlayoffGames(): void
+    protected function generatePlayoffGames(): void
     {
-        //TODO: доделать
-
-        $round = 4;
-
-        $divisions = Team::getTeamsByDivisions();
-
-        $date = now()->subDays(random_int(180, 365));
-
-        while(1 !== $round) {
-            $limit = $round;
-
-            /** @noinspection AlterInForeachInspection */
-            foreach ($divisions as &$teams) {
-                /** @var Collection $teams */
-                $teams = $teams->sortByDesc(fn($team) => $team->score)->take($limit);
-            }
-
-            $i = 1;
-            $j = $limit;
-
-            while ($limit > 0) {
-                $teamA = Arr::first($divisions)->take($i)->last();
-                $teamB = Arr::last($divisions)->take($j)->last();
-
-                self::addGame($teamA, $teamB, $date, GameType::PLAYOFF, GameRound::from("1/$round"));
-
-                $i++;
-                $j--;
-                $limit--;
-            }
-
-            $round /= 2;
-        }
+        $this->generateFinalGame();
     }
 
     /**
@@ -116,11 +148,11 @@ class GameSeeder extends Seeder
      */
     public function run(): void
     {
-        DB::transaction(static function () {
+        DB::transaction(function () {
             Game::truncate();
 
-            self::generateGroupGames();
-            self::generatePlayoffGames();
+            $this->generateGroupGames();
+            $this->generatePlayoffGames();
         });
     }
 }
