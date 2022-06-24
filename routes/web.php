@@ -29,4 +29,4 @@ Route::get('regenerate', static function () {
     \Illuminate\Support\Facades\Artisan::call('db:seed');
 
     return redirect('/');
-});
+})->name('regenerate');

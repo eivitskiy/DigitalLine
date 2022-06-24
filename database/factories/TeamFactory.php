@@ -16,7 +16,7 @@ class TeamFactory extends Factory
     #[ArrayShape(['name' => "string", 'division' => "mixed"])] public function definition(): array
     {
         do {
-            $name = $this->faker->company;
+            $name = $this->faker->unique()->company;
         } while (Str::length($name) > 32);
 
         return [
