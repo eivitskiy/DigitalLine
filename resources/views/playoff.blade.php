@@ -19,8 +19,8 @@
                             <span style="text-decoration:line-through">{{ $game->participantA->name }}</span>
                             VS {{ $game->participantB->name }}
                         @endif
-                            <br/>
-                            {{ $game->score_a . ':' .  $game->score_b }}
+                        <br/>
+                        {{ $game->score_a . ':' .  $game->score_b }}
                     </td>
                 @endif
             @endforeach
@@ -28,13 +28,19 @@
             @if(\App\Enums\GameRound::OneFourth === $i)
                 <td rowspan="4" class="text-left">
                     <b>Results:</b><br/>
+                    @php $number = 1 @endphp
+
                     @foreach($queue as $index => $gameNode)
                         @if($gameNode->game)
                             @if(0 === $index)
-                                {{$index+1}}. {{$gameNode->game->winner->name}}<br/>
+                                {{$number++}}. {{$gameNode->game->winner->name}}<br/>
                             @endif
-                            {{$index+2}}. {{$gameNode->game->looser->name}}<br/>
+                            {{$number++}}. {{$gameNode->game->looser->name}}<br/>
                         @endif
+                    @endforeach
+
+                    @foreach($loosers as $looser)
+                        {{$number++}}. {{$looser->name}}<br/>
                     @endforeach
                 </td>
             @endif

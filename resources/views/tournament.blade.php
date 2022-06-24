@@ -111,6 +111,7 @@
                                     @include('playoff', [
                                         'games' => $playoffGames,
                                         'queue' => $playoffGamesQueue,
+                                        'loosers' => $looseTeams,
                                     ])
                                 </div>
                             </div>
