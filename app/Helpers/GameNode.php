@@ -6,7 +6,7 @@ use App\Models\Game;
 
 class GameNode
 {
-    public Game $game;
+    public Game|null $game = null;
     public GameNode|null $left = null;
     public GameNode|null $right = null;
 
@@ -17,7 +17,7 @@ class GameNode
 
             $childGames = Game::where('round', $this->game->round->prevRound())->get();
 
-            $this->left = new GameNode($childGames->shift());
+            $this->left  = new GameNode($childGames->shift());
             $this->right = new GameNode($childGames->shift());
         }
     }

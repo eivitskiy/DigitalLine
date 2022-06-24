@@ -49,6 +49,10 @@
                 height: 75px;
                 width: 100px;
             }
+
+            table.games td.text-left {
+                text-align: left;
+            }
         </style>
     </head>
     <body class="antialiased">
@@ -104,7 +108,10 @@
 
                             <div class="ml-12">
                                 <div class="mt-2 text-sm">
-                                    @include('playoff', ['games' => $playoff])
+                                    @include('playoff', [
+                                        'games' => $playoffGames,
+                                        'queue' => $playoffGamesQueue,
+                                    ])
                                 </div>
                             </div>
                         </div>

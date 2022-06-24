@@ -26,7 +26,17 @@
             @endforeach
 
             @if(\App\Enums\GameRound::OneFourth === $i)
-                <td rowspan="4">Результаты</td>
+                <td rowspan="4" class="text-left">
+                    <b>Results:</b><br/>
+                    @foreach($queue as $index => $gameNode)
+                        @if($gameNode->game)
+                            @if(0 === $index)
+                                {{$index+1}}. {{$gameNode->game->winner->name}}<br/>
+                            @endif
+                            {{$index+2}}. {{$gameNode->game->looser->name}}<br/>
+                        @endif
+                    @endforeach
+                </td>
             @endif
         </tr>
     @endfor

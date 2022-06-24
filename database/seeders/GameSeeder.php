@@ -76,6 +76,9 @@ class GameSeeder extends Seeder
         }
     }
 
+    /**
+     * @throws Exception
+     */
     protected function generateOneFourthGames(): \Illuminate\Support\Collection
     {
         $divisions = Team::getTeamsByDivisions();

@@ -29,6 +29,7 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null    $updated_at
  * @property Carbon|null    $deleted_at
  * @property-read Team|null $winner
+ * @property-read Team|null $looser
  * @property-read Team|null $participantA
  * @property-read Team|null $participantB
  * @method static GameFactory factory(...$parameters)
@@ -66,6 +67,11 @@ class Game extends Model
         'round',
     ];
 
+    protected $appends = [
+        'winner',
+        'loser',
+    ];
+
     /** @noinspection PhpUnused */
     public function getWinnerAttribute(): ?Team
     {
@@ -74,6 +80,20 @@ class Game extends Model
         }
 
         if ($this->score_b > $this->score_a) {
+            return $this->participantB;
+        }
+
+        return null;
+    }
+
+    /** @noinspection PhpUnused */
+    public function getLooserAttribute(): ?Team
+    {
+        if ($this->score_a < $this->score_b) {
+            return $this->participantA;
+        }
+
+        if ($this->score_b < $this->score_a) {
             return $this->participantB;
         }
 
