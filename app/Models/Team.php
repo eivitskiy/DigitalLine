@@ -59,7 +59,7 @@ class Team extends Model
     {
         $score = 0;
 
-        foreach($this->games()->get() as $game) {
+        foreach($this->games()->where('type', GameType::GROUP)->get() as $game) {
             if (is_null($game->winner)) {
                 // за ничью - 1 балл
                 $score++;

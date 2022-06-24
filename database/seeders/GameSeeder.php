@@ -108,39 +108,35 @@ class GameSeeder extends Seeder
         return $games;
     }
 
-    protected function generateSemiFinalGames(): \Illuminate\Support\Collection
-    {
-        $oneFourthGames = $this->generateOneFourthGames();
-
-        $games = collect();
-
-        for ($i = 0; $i < 2; $i++) {
-            $teamA = $oneFourthGames->shift()->winner;
-            $teamB = $oneFourthGames->shift()->winner;
-
-            if ($game = $this->addGame($teamA, $teamB, GameType::PLAYOFF, GameRound::SemiFinal)) {
-                $games->push($game);
-            }
-        }
-        return $games;
-    }
-
-    protected function generateFinalGame(): void
-    {
-        $semiFinalGames = $this->generateSemiFinalGames();
-
-        $teamA = $semiFinalGames->shift()->winner;
-        $teamB = $semiFinalGames->shift()->winner;
-
-        $this->addGame($teamA, $teamB, GameType::PLAYOFF, GameRound::TheFinal);
-    }
-
     /**
      * @throws Exception
      */
-    protected function generatePlayoffGames(): void
+    protected function generatePlayoffGames(GameRound $round): \Illuminate\Support\Collection
     {
-        $this->generateFinalGame();
+        if (null === $round->prevRound()) {
+            $prevGames = $this->generateOneFourthGames();
+        } else {
+            $prevGames = $this->generatePlayoffGames($round->prevRound());
+        }
+
+        $games = collect();
+
+        $prevGames->sliding(2,2)->eachSpread(function ($previous, $current) use ($games) {
+            /**
+             * @var Game $previous
+             * @var Game $current
+             */
+            $teamA = $previous->winner;
+            $teamB = $current->winner;
+
+            $round = $current->round->nextRound();
+
+            if ($game = $this->addGame($teamA, $teamB, GameType::PLAYOFF, $round)) {
+                $games->push($game);
+            }
+        });
+
+        return $games;
     }
 
     /**
@@ -152,7 +148,7 @@ class GameSeeder extends Seeder
             Game::truncate();
 
             $this->generateGroupGames();
-            $this->generatePlayoffGames();
+            $this->generatePlayoffGames(GameRound::TheFinal);
         });
     }
 }
