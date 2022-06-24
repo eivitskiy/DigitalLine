@@ -117,7 +117,7 @@ class Game extends Model
     }
 
     /** @noinspection PhpUnused */
-    public function teams(): \Illuminate\Database\Query\Builder
+    public function teams(): Builder|\Illuminate\Database\Query\Builder
     {
         return Team::whereIn('id', [
             $this->participant_a,

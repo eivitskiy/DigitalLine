@@ -22,24 +22,26 @@ class GamesTree
     {
         $dummyQueue = new SplQueue();
         $dummyQueue->enqueue($this->root);
-        $this->nodeTraversal($dummyQueue, $this->root);
+        $this->nodeTraversal($dummyQueue);
 
         return $this->queue;
     }
 
-    protected function nodeTraversal($dummyQueue, $node): void
+    protected function nodeTraversal(SplQueue $dummyQueue): void
     {
-        if ($node->left) {
-            $dummyQueue->enqueue($node->left);
-        }
-        if ($node->right) {
-            $dummyQueue->enqueue($node->right);
-        }
-
         if (!$dummyQueue->isEmpty()) {
-            $nextNode      = $dummyQueue->dequeue();
-            $this->queue[] = $nextNode;
-            $this->nodeTraversal($dummyQueue, $nextNode);
+
+            $node          = $dummyQueue->dequeue();
+            $this->queue[] = $node;
+
+            if ($node->left) {
+                $dummyQueue->enqueue($node->left);
+            }
+            if ($node->right) {
+                $dummyQueue->enqueue($node->right);
+            }
+
+            $this->nodeTraversal($dummyQueue);
         }
     }
 }
